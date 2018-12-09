@@ -5,7 +5,7 @@ import numpy as np
 
 # IWAE
 use_iwae = True
-imp_n = 1
+imp_n = 5
 def repeate_input(x):
     for i in range(len(x)):
         x[i] = np.repeat(x[i], imp_n, axis=0)
@@ -73,7 +73,7 @@ if save_imported_midi_as_pickle:
 save_anything = True
 
 split_equally_to_train_and_test = True
-test_fraction = 0.0
+test_fraction = 0.025
 save_preprocessed_midi = False
 smaller_training_set_factor = 1.0 #multiply training set size by that factor (if higher than 1.0, will have unbalanced dataset if split_equally_to_train_and_test)
 
@@ -123,7 +123,7 @@ batch_size = 256
 learning_rate = 0.0002#1e-05 #1e-06
 beta = 0.1
 epsilon_std = 0.01
-save_step = 10
+save_step = 5
 shuffle_train_set = True
 bidirectional = False
 num_layers_encoder = 2

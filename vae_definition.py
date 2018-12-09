@@ -39,7 +39,7 @@ class KLDivergenceLayer(Layer):
         lpz =  - ((K.square(z - self.prior_mean)) / (2 * K.square(self.prior_std))) - K.log(self.prior_std)
         var = K.exp(log_var)
         lqzx = - ((K.square(z - mu)) / (2 * K.square(var))) - K.log(var)
-        kl = lpz - lqzx
+        kl = lqzx - lpz
 
         self.add_loss(K.mean(kl), inputs=inputs)
         
