@@ -801,6 +801,22 @@ for e in range(start_epoch, epochs):
 
         input_list, output_list, sample_weight = vae_definition.prepare_autoencoder_input_and_output_list(X,Y,C,I,V,D,S,H, return_sample_weight=True)
 
+        input_list = repeate_input(input_list)
+        output_list = repeate_input(output_list)
+        sample_weight = repeate_input(sample_weight)
+
+        # for kk in input_list:
+        #     print(type(kk))
+        #     print(kk.shape)
+
+        # print ("break")
+
+        # for kk in output_list:
+        #     print(type(kk))
+        #     print(kk.shape)
+
+        # raise ValueError
+
         hist = autoencoder.fit(input_list, output_list,
                 epochs=1,
                 batch_size=batch_size,

@@ -3,6 +3,13 @@ import time
 import os
 import numpy as np
 
+# IWAE
+imp_n = 5
+def repeate_input(x):
+    for i in range(len(x)):
+        x[i] = np.repeat(x[i], imp_n, axis=0)
+    return x
+
 
 # This is where you should put your midi files
 source_folder = 'data/original/'
@@ -33,7 +40,7 @@ do_not_sample_in_evaluation = True
 
 
 # Folder names or file names will be classified by those labels
-classes = ['style1', 'style2'] #list of strings like 'Bach', 'Mozart'. Name a folder in your source_folder like that and make sure there are no files with that name
+classes = ['Pop', 'Jazz'] #list of strings like 'Bach', 'Mozart'. Name a folder in your source_folder like that and make sure there are no files with that name
 
 #whether to include unknown classes as a third class
 include_unknown = False 
@@ -52,7 +59,7 @@ test_train_set = False
 t = str(int(round(time.time())))
 
 #activate the fast route to not always have to preprocess midi files
-load_from_pickle_instead_of_midi = False
+load_from_pickle_instead_of_midi = True
 
 save_imported_midi_as_pickle = True
 if save_imported_midi_as_pickle:

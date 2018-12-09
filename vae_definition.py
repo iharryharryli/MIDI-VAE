@@ -28,12 +28,24 @@ class KLDivergenceLayer(Layer):
 
     def call(self, inputs):
 
-        mu, log_var = inputs
-        prior_log_var = K.log(self.prior_std) * 2
-        prior_var = K.square(self.prior_std)
-        #kl_batch = self.beta *( - .5 * K.sum(1 + log_var - K.square(mu) - K.exp(log_var), axis=1))
-        kl_batch = self.beta * ( - 0.5 * K.sum(1 + log_var - prior_log_var - ((K.square(mu - self.prior_mean) + K.exp(log_var)) / prior_var), axis=1))
-        self.add_loss(K.mean(kl_batch), inputs=inputs)
+        mu, log_var, z = inputs
+        # prior_log_var = K.log(self.prior_std) * 2
+        # prior_var = K.square(self.prior_std)
+        # #kl_batch = self.beta *( - .5 * K.sum(1 + log_var - K.square(mu) - K.exp(log_var), axis=1))
+        # kl_batch = self.beta * ( - 0.5 * K.sum(1 + log_var - prior_log_var - ((K.square(mu - self.prior_mean) + K.exp(log_var)) / prior_var), axis=1))
+        # self.add_loss(K.mean(kl_batch), inputs=inputs)
+
+
+        lpz =  - ((K.square(z - self.prior_mean)) / (2 * K.square(self.prior_std))) - K.log(self.prior_std)
+        var = K.exp(log_var)
+        lqzx = - ((K.square(z - mu)) / (2 * K.square(var))) - K.log(var)
+        kl = lpz - lqzx
+
+        self.add_loss(K.mean(kl), inputs=inputs)
+        
+        #self.add_loss()
+        #z_dist.log_prob(z).sum(-1)
+
         return inputs
 
 class VAE(object):
@@ -506,13 +518,14 @@ class VAE(object):
         z_mean = Dense(self.latent_rep_size, name='z_mean', activation='linear', kernel_initializer='glorot_uniform')(h_1)
         z_log_var = Dense(self.latent_rep_size, name='z_log_var', activation='linear', kernel_initializer='glorot_uniform')(h_2)
         
+        z = Lambda(sampling, output_shape=(self.latent_rep_size,), name='lambda')([z_mean, z_log_var])
+
         if epsilon_factor > 0:
             e = Input(shape=(1,), tensor=K.constant(self.epsilon_factor))
             scaled_z_log_var = Add()[z_log_var, e]
-            z_mean, scaled_z_log_var = KLDivergenceLayer(beta=self.beta, prior_mean=self.prior_mean, prior_std=self.prior_std, name='kl_layer')([z_mean, scaled_z_log_var])
+            z_mean, scaled_z_log_var, _ = KLDivergenceLayer(beta=self.beta, prior_mean=self.prior_mean, prior_std=self.prior_std, name='kl_layer')([z_mean, scaled_z_log_var, z])
         else:
-            z_mean, z_log_var = KLDivergenceLayer(beta=self.beta, prior_mean=self.prior_mean, prior_std=self.prior_std, name='kl_layer')([z_mean, z_log_var])
-        z = Lambda(sampling, output_shape=(self.latent_rep_size,), name='lambda')([z_mean, z_log_var])
+            z_mean, z_log_var, _ = KLDivergenceLayer(beta=self.beta, prior_mean=self.prior_mean, prior_std=self.prior_std, name='kl_layer')([z_mean, z_log_var, z])
         return (z)
 
 
