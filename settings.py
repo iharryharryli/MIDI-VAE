@@ -4,11 +4,14 @@ import os
 import numpy as np
 
 # IWAE
-imp_n = 5
+use_iwae = True
+imp_n = 1
 def repeate_input(x):
     for i in range(len(x)):
         x[i] = np.repeat(x[i], imp_n, axis=0)
     return x
+
+
 
 
 # This is where you should put your midi files
@@ -70,7 +73,7 @@ if save_imported_midi_as_pickle:
 save_anything = True
 
 split_equally_to_train_and_test = True
-test_fraction = 0.1
+test_fraction = 0.0
 save_preprocessed_midi = False
 smaller_training_set_factor = 1.0 #multiply training set size by that factor (if higher than 1.0, will have unbalanced dataset if split_equally_to_train_and_test)
 
@@ -83,7 +86,7 @@ MAXIMAL_NUMBER_OF_VOICES_PER_TRACK = 1 #will get overriden if there are less tra
 MAX_VELOCITY = 127.
 
 max_songs = 100000 #if you want to reduce the maximum number of midi files to import, set this lower
-equal_mini_songs = False #set this to true, if you want to remove imported songs if one class has higher
+equal_mini_songs = True #set this to true, if you want to remove imported songs if one class has higher
 #we set this to True for MIDI-VAE, but think it's best for you to start with False
 
 attach_instruments = False

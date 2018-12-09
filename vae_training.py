@@ -720,6 +720,10 @@ for test_song_num in range(len(Y_test)):
 # Train and test
 # ----------------------------------------------------------------------------------------------
 
+# loss logging
+loss_logging_file = os.path.join(model_path, "loss_history")
+
+
 # Train model
 print('Training model...')
 start_epoch = 0
@@ -976,8 +980,12 @@ for e in range(start_epoch, epochs):
 
     print("Total train loss: ", total_train_loss)
 
-    if e % test_step is 0:
-        test()
+    with open(loss_logging_file, "a") as the_file:
+        the_file.write("{} {} {} {} {} {} {} {} {} {} \n".format(e, train_meta_instrument_accuracy, train_meta_instrument_loss, 
+            train_meta_velocity_loss, train_composer_accuracy, train_composer_loss, total_train_accuracy,
+            total_train_notes_loss, kl_loss, total_train_loss))
+    # if e % test_step is 0:
+    #     test()
     
     if e% save_step is 0:
         print('saving model')
